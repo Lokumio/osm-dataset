@@ -1,0 +1,28 @@
+services:
+  osm-dataset-postgis:
+    image: postgis/postgis:16-3.4
+    container_name: osm-dataset-postgis
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: osmdata
+      POSTGRES_PASSWORD: osmdata
+    # Not 5432: this is a throwaway build database holding ~3.4 GB of osm2pgsql
+    # scratch tables, and it must never be confused with an application database.
+    #
+    # Bound to loopback, not to 0.0.0.0, which is what a bare "5545:5432" would
+    # do. The password above is published along with this file, so without the
+    # 127.0.0.1 anyone sharing a network with a running build gets superuser on
+    # this container — and a default postgres image grants COPY ... FROM PROGRAM.
+    ports:
+      - "127.0.0.1:5545:5432"
+    volumes:
+      - osm-dataset-pgdata:/var/lib/postgresql/data
+    shm_size: "512mb"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U osmdata -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  osm-dataset-pgdata:

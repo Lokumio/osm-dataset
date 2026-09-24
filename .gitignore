@@ -1,0 +1,9 @@
+# Build artefacts, not repository content. A Kraków dump is 35 MB and pl20 is
+# 212 MB; git does not want either, and the data ages faster than the scripts.
+# ODbL §4.6 asks for the method to be published, which is what this repo is.
+dataset/
+
+# Cached PBF downloads and the cut extracts.
+work/
+
+.DS_Store
